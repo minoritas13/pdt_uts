@@ -9,7 +9,7 @@ class Cabang extends Model
 {
     use HasFactory;
     
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'cabang';
     protected $fillable = ['kode_cabang', 'nama_cabang', 'lokasi'];
 }

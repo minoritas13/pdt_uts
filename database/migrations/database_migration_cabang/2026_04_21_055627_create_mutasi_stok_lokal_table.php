@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pusat')->create('mutasi_gudang_pusat', function (Blueprint $table) {
+        Schema::connection('pgsql_cabang')->create('mutasi_stok_lokal', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('buku_id');
+            $table->unsignedBigInteger('buku_id'); // Relasi logis ke db_pusat.buku
             $table->enum('jenis', ['MASUK', 'KELUAR']);
             $table->integer('qty');
-            $table->string('keterangan'); // Misal: "Dari Penerbit" atau "Kirim ke Cabang BDO"
+            $table->string('keterangan'); // Misal: "Kiriman Pusat" atau "Terjual Struk #123"
             $table->timestamp('waktu')->useCurrent();
             $table->timestamps();
-
-            $table->foreign('buku_id')->references('id')->on('buku');
         });
     }
 
     public function down(): void
     {
-        Schema::connection('pusat')->dropIfExists('mutasi_gudang_pusat');
+        Schema::connection('pgsql_cabang')->dropIfExists('mutasi_stok_lokal');
     }
 };

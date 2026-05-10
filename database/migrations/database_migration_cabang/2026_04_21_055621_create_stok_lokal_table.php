@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('cabang')->create('pelanggan_lokal', function (Blueprint $table) {
+        Schema::connection('pgsql_cabang')->create('stok_lokal', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('no_telp')->unique();
-            $table->integer('poin')->default(0);
+            $table->unsignedBigInteger('buku_id'); // Relasi logis ke db_pusat.buku
+            $table->integer('qty_tersedia')->default(0);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::connection('cabang')->dropIfExists('pelanggan_lokal');
+        Schema::connection('pgsql_cabang')->dropIfExists('stok_lokal');
     }
 };

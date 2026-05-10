@@ -9,7 +9,7 @@ class StokGudangPusat extends Model
 {
     use HasFactory;
     
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'stok_gudang_pusat';
     protected $fillable = ['buku_id', 'qty_tersedia'];
 }

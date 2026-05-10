@@ -9,7 +9,7 @@ class MutasiStokLokal extends Model
 {
     use HasFactory;
     
-    protected $connection = 'cabang';
+    protected $connection = 'pgsql_cabang';
     protected $table = 'mutasi_stok_lokal';
     protected $fillable = ['buku_id', 'jenis', 'qty', 'keterangan', 'waktu'];
 }

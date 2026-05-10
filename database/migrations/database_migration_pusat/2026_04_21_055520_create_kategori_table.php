@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pusat')->create('penerbit', function (Blueprint $table) {
+        Schema::connection('pgsql_pusat')->create('kategori', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_penerbit');
-            $table->string('kota')->nullable();
+            $table->string('nama_kategori');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::connection('pusat')->dropIfExists('penerbit');
+        Schema::connection('pgsql_pusat')->dropIfExists('kategori');
     }
 };

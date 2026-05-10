@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // WAJIB ditambahkan connection('pusat')
-        Schema::connection('pusat')->create('pelanggan_nasional', function (Blueprint $table) {
+        Schema::connection('pgsql_cabang')->create('pelanggan_lokal', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('asal_cabang');
+            $table->string('no_telp')->unique();
+            $table->integer('poin')->default(0);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::connection('pusat')->dropIfExists('pelanggan_nasional');
+        Schema::connection('pgsql_cabang')->dropIfExists('pelanggan_lokal');
     }
 };

@@ -11,18 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pusat')->create('stok_gudang_pusat', function (Blueprint $table) {
+        Schema::connection('pgsql_pusat')->create('penerbit', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('buku_id');
-            $table->integer('qty_tersedia')->default(0);
+            $table->string('nama_penerbit');
+            $table->string('kota')->nullable();
             $table->timestamps();
-
-            $table->foreign('buku_id')->references('id')->on('buku');
         });
     }
 
     public function down(): void
     {
-        Schema::connection('pusat')->dropIfExists('stok_gudang_pusat');
+        Schema::connection('pgsql_pusat')->dropIfExists('penerbit');
     }
 };

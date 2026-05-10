@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pusat')->create('cabang', function (Blueprint $table) {
+        Schema::connection('pgsql_pusat')->create('cabang', function (Blueprint $table) {
             $table->id();
             $table->string('kode_cabang')->unique();
             $table->string('nama_cabang');
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection('pusat')->dropIfExists('cabang');
+        Schema::connection('pgsql_pusat')->dropIfExists('cabang');
     }
 };

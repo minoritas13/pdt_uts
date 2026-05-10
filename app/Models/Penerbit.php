@@ -9,7 +9,13 @@ class Penerbit extends Model
 {
     use HasFactory;
     
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'penerbit';
     protected $fillable = ['nama_penerbit', 'kota'];
+
+    public function buku(){
+
+        return $this->hasMany(Buku::class);
+    
+    }
 }

@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pusat')->create('kategori', function (Blueprint $table) {
+        Schema::connection('pgsql_pusat')->create('stok_gudang_pusat', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kategori');
+            $table->unsignedBigInteger('buku_id');
+            $table->integer('qty_tersedia')->default(0);
             $table->timestamps();
+
+            $table->foreign('buku_id')->references('id')->on('buku');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::connection('pusat')->dropIfExists('kategori');
+        Schema::connection('pgsql_pusat')->dropIfExists('stok_gudang_pusat');
     }
 };

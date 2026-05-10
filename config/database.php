@@ -114,32 +114,25 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-        'pusat' => [
-            'driver' => env('DB_CONNECTION_PUSAT', 'mysql'),
-            'host' => env('DB_HOST_PUSAT', '127.0.0.1'),
-            'port' => env('DB_PORT_PUSAT', '3306'),
-            'database' => env('DB_DATABASE_PUSAT', 'forge'),
-            'username' => env('DB_USERNAME_PUSAT', 'forge'),
-            'password' => env('DB_PASSWORD_PUSAT', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
+
+        'pgsql_pusat' => [ // Ini otomatis jadi koneksi pusat (default)
+            'driver' => 'pgsql',
+            'host' => env('DB_HOST', 'pgsql'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'db_pusat'),
+            'username' => env('DB_USERNAME', 'sail'),
+            'password' => env('DB_PASSWORD', 'password'),
+            // ... setting bawaan lainnya
         ],
 
-        'cabang' => [
-            'driver' => env('DB_CONNECTION_CABANG', 'mysql'),
-            'host' => env('DB_HOST_CABANG', '127.0.0.1'),
-            'port' => env('DB_PORT_CABANG', '3306'),
-            'database' => env('DB_DATABASE_CABANG', 'forge'),
-            'username' => env('DB_USERNAME_CABANG', 'forge'),
-            'password' => env('DB_PASSWORD_CABANG', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
+        'pgsql_cabang' => [ // Koneksi khusus cabang
+            'driver' => 'pgsql',
+            'host' => env('DB_CABANG_HOST', 'pgsql'),
+            'port' => env('DB_CABANG_PORT', '5432'),
+            'database' => env('DB_CABANG_DATABASE', 'db_cabang'),
+            'username' => env('DB_CABANG_USERNAME', 'sail'),
+            'password' => env('DB_CABANG_PASSWORD', 'password'),
+            // ... setting bawaan lainnya
         ],
 
     ],

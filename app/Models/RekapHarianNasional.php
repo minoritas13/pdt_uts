@@ -9,7 +9,7 @@ class RekapHarianNasional extends Model
 {
     use HasFactory;
     
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'rekap_harian_nasional';
     protected $fillable = ['cabang_id', 'tanggal', 'total_transaksi', 'total_pendapatan'];
 }

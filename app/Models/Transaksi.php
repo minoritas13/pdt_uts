@@ -9,7 +9,7 @@ class Transaksi extends Model
 {
     use HasFactory;
     
-    protected $connection = 'cabang';
+    protected $connection = 'pgsql_cabang';
     protected $table = 'transaksi';
     protected $fillable = ['no_struk', 'pelanggan_id', 'total', 'status_sinkronisasi'];
 

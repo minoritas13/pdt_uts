@@ -9,7 +9,7 @@ class Buku extends Model
 {
     use HasFactory;
 
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'buku';
     protected $fillable = ['kategori_id', 'penerbit_id', 'isbn', 'judul', 'penulis', 'harga_nasional'];
 

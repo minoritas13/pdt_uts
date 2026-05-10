@@ -9,7 +9,7 @@ class DetailTransaksi extends Model
 {
     use HasFactory;
     
-    protected $connection = 'cabang';
+    protected $connection = 'pgsql_cabang';
     protected $table = 'detail_transaksi';
     protected $fillable = ['transaksi_id', 'buku_id', 'qty', 'harga_satuan', 'subtotal'];
 }

@@ -9,7 +9,7 @@ class StokLokal extends Model
 {
     use HasFactory;
     
-    protected $connection = 'cabang';
+    protected $connection = 'pgsql_cabang';
     protected $table = 'stok_lokal';
     protected $fillable = ['buku_id', 'qty_tersedia'];
 }

@@ -9,7 +9,7 @@ class MutasiGudangPusat extends Model
 {
     use HasFactory;
     
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'mutasi_gudang_pusat';
     protected $fillable = ['buku_id', 'jenis', 'qty', 'keterangan', 'waktu'];
 }

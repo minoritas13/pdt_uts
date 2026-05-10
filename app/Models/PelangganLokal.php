@@ -9,7 +9,7 @@ class PelangganLokal extends Model
 {
     use HasFactory;
     
-    protected $connection = 'cabang';
+    protected $connection = 'pgsql_cabang';
     protected $table = 'pelanggan_lokal';
     protected $fillable = ['nama', 'no_telp', 'poin'];
 }

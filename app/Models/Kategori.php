@@ -9,7 +9,7 @@ class Kategori extends Model
 {
     use HasFactory;
 
-    protected $connection = 'pusat';
+    protected $connection = 'pgsql_pusat';
     protected $table = 'kategori';
     protected $fillable = ['nama_kategori'];
 

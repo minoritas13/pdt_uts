@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('cabang')->create('transaksi', function (Blueprint $table) {
+        Schema::connection('pgsql_cabang')->create('transaksi', function (Blueprint $table) {
             $table->id();
             $table->string('no_struk')->unique();
             $table->unsignedBigInteger('pelanggan_id')->nullable(); // Boleh null jika bukan member
@@ -26,6 +26,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection('cabang')->dropIfExists('transaksi');
+        Schema::connection('pgsql_cabang')->dropIfExists('transaksi');
     }
 };
