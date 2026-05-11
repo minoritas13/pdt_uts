@@ -1,3 +1,3 @@
 <div>
-    <a href="{{route('buku')}}">back</a>
+    <a href="{{route('buku.index')}}">back</a>
 </div>

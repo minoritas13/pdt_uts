@@ -17,7 +17,7 @@ class BukuController extends Controller
         $buku = Buku::with(['kategori','penerbit'])->get();
 
         return view('admin.dashboard', compact('buku'));
-        
+
     }
 
     /**
@@ -41,19 +41,19 @@ class BukuController extends Controller
             'isbn' => 'required|string|unique:pgsql_pusat.buku,isbn',
             'harga_nasional' => 'required|numeric',
             'kategori_id' => 'required|exist:pgsql_pusat.kategori,id',
-            'penerbit_id' => 'required|exist:pgsql_pusat.penerbit,id',            
+            'penerbit_id' => 'required|exist:pgsql_pusat.penerbit,id',
         ]);
     }
 
     /**
     * Display the specified resource.
-    * 
+    *
     *  public function show(string $id)
     *   {
     *       //
     *   }
     */
-    
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -63,7 +63,7 @@ class BukuController extends Controller
         $kategori = Kategori::all();
         $penerbit = Penerbit::all();
 
-        return view('buku.edit', compact('buku','kategori', 'penerbit'));
+        return view('admin.buku.edit', compact('buku','kategori', 'penerbit'));
     }
 
     /**

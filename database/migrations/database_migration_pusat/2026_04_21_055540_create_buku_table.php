@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('penulis');
             $table->decimal('harga_nasional', 12, 2);
             $table->timestamps();
-
+            $table->softDeletes();
+            
             // Foreign key DALAM SATU database (Aman)
             $table->foreign('kategori_id')->references('id')->on('kategori');
             $table->foreign('penerbit_id')->references('id')->on('penerbit');
