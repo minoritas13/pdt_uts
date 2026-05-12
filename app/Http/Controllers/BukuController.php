@@ -38,11 +38,15 @@ class BukuController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:25',
             'isbn' => 'required|string|unique:pgsql_pusat.buku,isbn',
             'harga_nasional' => 'required|numeric',
-            'kategori_id' => 'required|exist:pgsql_pusat.kategori,id',
-            'penerbit_id' => 'required|exist:pgsql_pusat.penerbit,id',
+            'kategori_id' => 'required|exists:pgsql_pusat.kategori,id',
+            'penerbit_id' => 'required|exists:pgsql_pusat.penerbit,id',
         ]);
+
+        Buku::create($request->all());
+        return redirect()->route('buku.index')->with('message', 'Buku berhasil ditambahkan ke database');
     }
 
     /**
@@ -73,14 +77,16 @@ class BukuController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'isbn' => 'required|string|unique:pgsql_pusat.buku,isbn'.$id,
+            'isbn' => 'required|string|unique:pgsql_pusat.buku,isbn,'.$id,
             'harga_nasional' => 'required|numeric',
-            'kategori_id' => 'required|exist:pgsql_pusat.kategori|id',
-            'penerbit_id' => 'required|exist:pgsql_pusat.penerbit|id',
+            'kategori_id' => 'required|exists:pgsql_pusat.kategori,id',
+            'penerbit_id' => 'required|exists:pgsql_pusat.penerbit,id',
         ]);
 
         $buku = Buku::FindOrFail($id);
         $buku->update($request->all());
+
+        return redirect()->route('buku.index')->with('success', 'Data buku berhasil diperbarui!');
     }
 
     /**
