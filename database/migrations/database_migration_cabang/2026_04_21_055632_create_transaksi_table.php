@@ -16,9 +16,14 @@ return new class extends Migration
             $table->string('no_struk')->unique();
             $table->unsignedBigInteger('pelanggan_id')->nullable(); // Boleh null jika bukan member
             $table->decimal('total', 12, 2);
+
             // Status sinkronisasi sangat penting untuk antrean event (Eventual Consistency)
-            $table->enum('status_sinkronisasi', ['PENDING', 'SUKSES'])->default('PENDING');
+            $table->enum('status_pembayaran', ['PENDING', 'SUKSES'])->default('PENDING');
+
+            $table->enum('tipe_pesanan', ['ONLINE', 'OFFLINE'])->default('OFLINE');
+
             $table->timestamps();
+            $table->string('bukti_bayar')->nullable();
 
             $table->foreign('pelanggan_id')->references('id')->on('pelanggan_lokal');
         });

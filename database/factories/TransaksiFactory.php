@@ -23,7 +23,7 @@ class TransaksiFactory extends Factory
             'no_struk' => 'STRUK-' . strtoupper($this->faker->bothify('??###')),
             'pelanggan_id' => PelangganLokal::inRandomOrder()->first()->id,
             'total' => 0, // Akan dihitung manual di Seeder
-            'status_sinkronisasi' => 'SUKSES',
+            'tipe_pesanan' => 'ONLINE',
             'created_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
         ];
     }
