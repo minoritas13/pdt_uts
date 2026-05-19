@@ -26,7 +26,7 @@ class PenerbitController extends Controller
      */
     public function create()
     {
-        // return view('penerbit.create');
+        return view('admin.penerbit.create');
     }
 
     /**
@@ -65,7 +65,7 @@ class PenerbitController extends Controller
     {
         $penerbit = Penerbit::findOrFail($id);
 
-        // return view('penerbit.edit', compact('penerbit'));
+        return view('admin.penerbit.update', compact('penerbit'));
     }
 
     /**
@@ -81,8 +81,8 @@ class PenerbitController extends Controller
         $penerbit = Penerbit::findOrFail($id);
         $penerbit->update($request->all());
 
-        return response()->json(['message' => 'Data penerbit berhasil diperbarui']);
-        // return redirect()->route('penerbit.index')->with('success', 'Penerbit diubah');
+        //return response()->json(['message' => 'Data penerbit berhasil diperbarui']);
+        return redirect()->route('penerbit.index')->with('success', 'Penerbit diubah');
     }
 
     /**

@@ -13,7 +13,7 @@
 <body class="">
 
     <h2>Daftar Penerbit(Data Master)</h2>
-    <a href="{{route('buku.create')}}"></a>
+    <a href="{{route('penerbit.create')}}">Tambah Penerbit</a>
 
     <table>
         <thead>
@@ -36,7 +36,10 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" > Hapus </button>
-                    </form></td>
+                    </form>
+
+                    <a href="{{ route('penerbit.edit', $item->id) }}">edit</a>
+                </td>
             </tr>
             @endforeach
         </tbody>

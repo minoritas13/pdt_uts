@@ -6,6 +6,7 @@ use App\Http\Controllers\DistribusiCabangController;
 use App\Http\Controllers\DistribusiPusatController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PenerbitController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,7 @@ Route::prefix('admin-pusat')->group(function () {
     // Kelola Master Data
     Route::resource('buku', BukuController::class);
     Route::resource('penerbit', PenerbitController::class);
+    Route::resource('kategori', KategoriController::class);
     Route::get('/distribusi', [DistribusiPusatController::class, 'index'])->name('pusat.distribusi');
     Route::post('/distribusi/kirim', [DistribusiPusatController::class, 'kirimBarang'])->name('pusat.distribusi.kirim');
 
