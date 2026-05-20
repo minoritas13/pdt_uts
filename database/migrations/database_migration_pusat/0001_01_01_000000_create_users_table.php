@@ -11,23 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        // 1. Tambahkan connection('pgsql_pusat')
+        Schema::connection('pgsql_pusat')->create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // 2. Tambahkan kolom role untuk Hak Akses
+            $table->enum('role', ['SUPER_ADMIN', 'ADMIN_CABANG', 'KASIR', 'PELANGGAN'])->default('PELANGGAN');
+            
             $table->rememberToken();
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
+        // Pastikan tabel token juga masuk ke pusat
+        Schema::connection('pgsql_pusat')->create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
-        Schema::create('sessions', function (Blueprint $table) {
+        // Pastikan tabel sessions juga masuk ke pusat
+        Schema::connection('pgsql_pusat')->create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
@@ -42,8 +49,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        // Jangan lupa connection('pgsql_pusat') di fungsi down() juga
+        Schema::connection('pgsql_pusat')->dropIfExists('users');
+        Schema::connection('pgsql_pusat')->dropIfExists('password_reset_tokens');
+        Schema::connection('pgsql_pusat')->dropIfExists('sessions');
     }
 };

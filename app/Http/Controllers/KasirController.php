@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Transaksi;
-use App\Models\DetailTransaksi;
-use App\Models\StokLokal;
-use App\Models\MutasiStokLokal; // Tambahkan ini
 use App\Models\Buku;
+use App\Models\DetailTransaksi;
+use App\Models\MutasiStokLokal; // Tambahkan ini
+use App\Models\StokLokal;
+use App\Models\Transaksi;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KasirController extends Controller
 {
@@ -15,9 +16,9 @@ class KasirController extends Controller
     public function pesananOnline()
     {
         $transaksi = Transaksi::query()->where('tipe_pesanan', 'ONLINE')
-                              ->where('status_pembayaran', 'PENDING')
-                              ->whereNotNull('bukti_bayar')
-                              ->get();
+            ->where('status_pembayaran', 'PENDING')
+            ->whereNotNull('bukti_bayar')
+            ->get();
 
         return view('kasir.pesanan_online', compact('transaksi'));
     }
@@ -54,50 +55,100 @@ class KasirController extends Controller
         return redirect()->back()->with('success', 'Transaksi ' . $transaksi->no_struk . ' di-ACC! Stok berkurang dan mutasi tercatat.');
     }
 
-    public function prosesPOS(Request $request)
+    public function mesinPOS()
     {
-        $request->validate([
-            'buku_id' => 'required',
-            'qty'     => 'required|integer|min:1'
-        ]);
+        // Tampilkan hanya buku yang ADA STOKNYA di cabang ini
+        $stokLokal = StokLokal::query()->where('qty_tersedia', '>', 0)->get();
 
-        $buku = Buku::findOrFail($request->buku_id);
-        $total = $buku->harga_nasional * $request->qty;
-
-        // 1. Simpan Transaksi
-        $transaksi = Transaksi::create([
-            'no_struk'          => 'POS-' . time() . '-' . rand(10, 99),
-            'total'             => $total,
-            'status_pembayaran' => 'SUKSES',
-            'tipe_pesanan'      => 'OFFLINE',
-            'bukti_bayar'       => 'CASH'
-        ]);
-
-        // 2. Simpan Detail
-        DetailTransaksi::create([
-            'transaksi_id' => $transaksi->id,
-            'buku_id'      => $buku->id,
-            'qty'          => $request->qty,
-            'harga_satuan' => $buku->harga_nasional,
-            'subtotal'     => $total,
-        ]);
-
-        // 3. Potong Stok & Catat Mutasi
-        $stok = StokLokal::where('buku_id', $buku->id)->first();
-        if ($stok) {
-            // Potong stok
-            $stok->decrement('qty_tersedia', $request->qty);
-
-            // Catat mutasi
-            MutasiStokLokal::create([
-                'buku_id'    => $buku->id,
-                'jenis'      => 'KELUAR',
-                'qty'        => $request->qty,
-                'keterangan' => 'Penjualan Toko (POS) Struk #' . $transaksi->no_struk,
-                'waktu'      => now(),
-            ]);
+        foreach ($stokLokal as $stok) {
+            $stok->buku = Buku::query()->find($stok->buku_id);
         }
 
-        return redirect()->back()->with('success', 'Pembayaran Berhasil! Stok berkurang dan mutasi tercatat.');
+        return view('kasir.dashboard', compact('stokLokal'));
+    }
+
+    public function prosesPOS(Request $request)
+    {
+        // Validasi input berupa array (buku_id[] dan qty[])
+        $request->validate([
+            'buku_id'   => 'required|array',
+            'buku_id.*' => 'required',
+            'qty'       => 'required|array',
+            'qty.*'     => 'required|integer|min:1'
+        ], [
+            'buku_id.required' => 'Keranjang masih kosong, belum ada buku yang dipilih!'
+        ]);
+
+        $buku_ids = $request->buku_id;
+        $qtys = $request->qty;
+
+        // MULAI DATABASE TRANSACTION UNTUK CABANG
+        DB::connection('pgsql_cabang')->beginTransaction();
+
+        try {
+            $total_bayar = 0;
+            $items = [];
+
+            // 1. Kalkulasi Total & Pengecekan Stok Ulang
+            for ($i = 0; $i < count($buku_ids); $i++) {
+                $buku = Buku::query()->findOrFail($buku_ids[$i]);
+                $subtotal = $buku->harga_nasional * $qtys[$i];
+                $total_bayar += $subtotal;
+
+                // Keamanan Ekstra: Cek apakah stok masih cukup saat tombol diklik
+                $cekStok = StokLokal::query()->where('buku_id', $buku->id)->first();
+                if (!$cekStok || $cekStok->qty_tersedia < $qtys[$i]) {
+                    throw new \Exception("Stok buku '{$buku->judul}' tidak mencukupi!");
+                }
+
+                $items[] = [
+                    'buku'     => $buku,
+                    'qty'      => $qtys[$i],
+                    'subtotal' => $subtotal
+                ];
+            }
+
+            // 2. Simpan Transaksi Master
+            $no_struk = 'POS-' . time() . '-' . rand(10, 99);
+            $transaksi = Transaksi::create([
+                'no_struk'          => $no_struk,
+                'total'             => $total_bayar,
+                'status_pembayaran' => 'SUKSES',
+                'tipe_pesanan'      => 'OFFLINE',
+                'bukti_bayar'       => 'CASH'
+            ]);
+
+            // 3. Simpan Detail & Mutasi menggunakan perulangan
+            foreach ($items as $item) {
+                DetailTransaksi::create([
+                    'transaksi_id' => $transaksi->id,
+                    'buku_id'      => $item['buku']->id,
+                    'qty'          => $item['qty'],
+                    'harga_satuan' => $item['buku']->harga_nasional,
+                    'subtotal'     => $item['subtotal'],
+                ]);
+
+                // Potong Stok
+                $stok = StokLokal::query()->where('buku_id', $item['buku']->id)->first();
+                $stok->decrement('qty_tersedia', $item['qty']);
+
+                // Catat Mutasi
+                MutasiStokLokal::create([
+                    'buku_id'    => $item['buku']->id,
+                    'jenis'      => 'KELUAR',
+                    'qty'        => $item['qty'],
+                    'keterangan' => 'Penjualan Toko (POS) Struk #' . $no_struk,
+                    'waktu'      => now(),
+                ]);
+            }
+
+            // JIKA SEMUA BERHASIL, SIMPAN PERMANEN
+            DB::connection('pgsql_cabang')->commit();
+            return redirect()->back()->with('success', "Pembayaran Berhasil! No. Struk: {$no_struk}");
+        } catch (\Exception $e) {
+            // JIKA GAGAL, BATALKAN SEMUA PERUBAHAN DATABASE (ROLLBACK)
+            DB::connection('pgsql_cabang')->rollBack();
+            return redirect()->back()->with('error', 'Gagal memproses transaksi: ' . $e->getMessage());
+        }
     }
 }
