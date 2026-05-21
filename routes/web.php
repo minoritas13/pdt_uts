@@ -1,72 +1,64 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BukuController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\DistribusiCabangController;
+use App\Http\Controllers\PenerbitController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\DistribusiPusatController;
+use App\Http\Controllers\DistribusiCabangController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KatalogController;
-use App\Http\Controllers\KategoriController;
-use App\Http\Controllers\PenerbitController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CheckoutController;
 
-Route::get('/', function () {
-    return view('welcome'); // Halaman Landing Page
+// Rute Publik (Bisa diakses tanpa login)
+Route::get('/', function () { return view('welcome'); });
+
+// Rute Autentikasi (Guest / Belum Login)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.proses');
 });
 
-// Semua URL di dalam sini akan diawali dengan /admin-pusat/
-Route::prefix('admin-pusat')->group(function () {
+// Rute Logout (Harus login dulu baru bisa logout)
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-    // Kelola Master Data
+
+// ==========================================
+// PROTECTED ROUTES (WAJIB LOG IN)
+// ==========================================
+
+// 1. PREFIX: ADMIN PUSAT (Hanya SUPER_ADMIN)
+Route::prefix('admin-pusat')->middleware(['auth', 'role:SUPER_ADMIN'])->group(function () {
     Route::resource('buku', BukuController::class);
     Route::resource('penerbit', PenerbitController::class);
     Route::resource('kategori', KategoriController::class);
     Route::get('/distribusi', [DistribusiPusatController::class, 'index'])->name('pusat.distribusi');
     Route::post('/distribusi/kirim', [DistribusiPusatController::class, 'kirimBarang'])->name('pusat.distribusi.kirim');
-
 });
 
-// Semua URL di dalam sini akan diawali dengan /admin-cabang/
-Route::prefix('admin-cabang')->group(function () {
-
-    // Rute untuk Admin Cabang (Bisa Anda isi nanti)
-    // Contoh:
-    // Route::get('/stok', [StokLokalController::class, 'index'])->name('stok.index');
-    // Route::get('/mutasi', [MutasiController::class, 'index'])->name('mutasi.index');
-
+// 2. PREFIX: ADMIN CABANG (Hanya ADMIN_CABANG)
+Route::prefix('admin-cabang')->middleware(['auth', 'role:ADMIN_CABANG'])->group(function () {
     Route::get('/penerimaan', [DistribusiCabangController::class, 'index'])->name('cabang.penerimaan');
     Route::post('/penerimaan/terima/{id}', [DistribusiCabangController::class, 'terimaBarang'])->name('cabang.penerimaan.terima');
-
 });
 
-// Semua URL di dalam sini akan diawali dengan /kasir/
-Route::prefix('kasir')->group(function () {
-
-    // Manajemen Pesanan Online (Click & Collect)
+// 3. PREFIX: KASIR (Hanya KASIR)
+Route::prefix('kasir')->middleware(['auth', 'role:KASIR'])->group(function () {
     Route::get('/online', [KasirController::class, 'pesananOnline'])->name('kasir.online');
     Route::post('/online/acc/{id}', [KasirController::class, 'accPesananOnline'])->name('kasir.acc');
-
-    // Mesin Kasir Offline (POS)
     Route::get('/pos', [KasirController::class, 'mesinPOS'])->name('kasir.pos');
     Route::post('/pos/proses', [KasirController::class, 'prosesPOS'])->name('kasir.pos.proses');
-
 });
 
-// Semua URL di dalam sini akan diawali dengan /user/
-Route::prefix('user')->group(function () {
-
-    // Katalog Buku
+// 4. PREFIX: USER / PELANGGAN (Hanya PELANGGAN)
+Route::prefix('user')->middleware(['auth', 'role:PELANGGAN'])->group(function () {
     Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
-
-    // Keranjang Belanja
     Route::post('/cart/add/{id}', [KatalogController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [KatalogController::class, 'showCart'])->name('cart.show');
     Route::post('/cart/update', [KatalogController::class, 'updateCart'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [KatalogController::class, 'removeFromCart'])->name('cart.remove');
-
-    // Checkout & Pembayaran
     Route::post('/checkout', [CheckoutController::class, 'prosesCheckout'])->name('checkout.proses');
     Route::get('/checkout/bayar/{id}', [CheckoutController::class, 'halamanBayar'])->name('checkout.bayar');
     Route::post('/checkout/upload-bukti/{id}', [CheckoutController::class, 'uploadBukti'])->name('checkout.upload');
-
 });
