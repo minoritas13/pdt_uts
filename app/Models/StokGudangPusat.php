@@ -8,8 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class StokGudangPusat extends Model
 {
     use HasFactory;
-    
+
     protected $connection = 'pgsql_pusat';
     protected $table = 'stok_gudang_pusat';
     protected $fillable = ['buku_id', 'qty_tersedia'];
+
+    public function buku()
+    {
+        return $this->belongsTo(Buku::class, 'buku_id');
+    }
 }

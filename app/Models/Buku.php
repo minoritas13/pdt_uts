@@ -32,10 +32,7 @@ class Buku extends Model
             StokGudangPusat::where('buku_id', $buku->id)->delete();
 
             StokLokal::where('buku_id', $buku->id)->delete();
-            
+
         });
-
-
-
     }
 }
