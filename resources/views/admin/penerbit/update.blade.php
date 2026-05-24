@@ -1,34 +1,154 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Data Penerbit</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn-submit { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-submit:hover { background-color: #218838; }
-        .btn-back { display: inline-block; margin-bottom: 20px; color: #6c757d; text-decoration: none; font-weight: bold; }
-        .text-danger { color: red; font-size: 13px; margin-top: 5px; display: block; }
-    </style>
-</head>
-<body>
+@extends('layouts.admin')
 
-    <div class="container">
-        <a href="{{ route('penerbit.index') }}" class="btn-back">← Kembali ke Daftar Penerbit</a>
+@section('title', 'Edit Data Penerbit — SPBT Admin')
 
-        <h2 style="margin-top: 0;">Edit Data Penerbit</h2>
+@push('styles')
+<style>
+    .page-header {
+        margin-bottom: 24px;
+    }
+    .page-header h1 {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--gray-800);
+    }
+    .page-header p {
+        font-size: 13.5px;
+        color: var(--gray-400);
+        margin-top: 2px;
+    }
 
-        <form action="{{ route('penerbit.update', $penerbit->id) }}" method="POST">
-            @csrf
-            @method('PUT')
+    /* ─── FORM CARD COMPONENT ─── */
+    .form-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 28px;
+        border: 1px solid var(--gray-200);
+        box-shadow: 0 4px 12px rgba(26, 46, 90, 0.03);
+        max-width: 580px;
+    }
 
+    .form-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 8px;
+    }
+
+    .form-group label span {
+        color: var(--red);
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 18px;
+        border: 1px solid var(--gray-200);
+        border-radius: 30px;
+        font-size: 13.5px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        outline: none;
+        color: var(--gray-800);
+        background-color: var(--white);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+        border-color: #0c73be;
+        box-shadow: 0 0 0 3px rgba(12, 115, 190, 0.1);
+    }
+
+    /* ─── ACTION BUTTONS ─── */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--gray-100);
+    }
+
+    .btn-update {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 30px;
+        font-size: 13.5px;
+        font-weight: 600;
+        border: none;
+        background: #0c73be;
+        color: var(--white);
+        cursor: pointer;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        transition: background 0.2s;
+        text-align: center;
+    }
+
+    .btn-update:hover {
+        background: #0b4a99;
+    }
+
+    .btn-cancel {
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 13.5px;
+        font-weight: 600;
+        border: 1.5px solid var(--gray-200);
+        background: var(--white);
+        color: var(--gray-600);
+        text-decoration: none;
+        text-align: center;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--red);
+        color: var(--red);
+        background: var(--red-bg);
+    }
+
+    .text-danger {
+        color: var(--red);
+        font-size: 11.5px;
+        font-weight: 600;
+        margin-top: 6px;
+        padding-left: 14px;
+        display: block;
+    }
+
+    @media (max-width: 480px) {
+        .form-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+        .btn-update, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+
+<div class="page-header">
+    <h1>Edit Data Penerbit</h1>
+    <p>Perbarui detail data administrasi perusahaan penerbit mitra internal.</p>
+</div>
+
+<div class="form-card">
+    <form action="{{ route('penerbit.update', $penerbit->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="form-grid">
             <div class="form-group">
-                <label for="nama_penerbit">Nama Penerbit <span style="color:red;">*</span></label>
+                <label for="nama_penerbit">Nama Penerbit <span>*</span></label>
                 <input type="text" name="nama_penerbit" id="nama_penerbit" value="{{ old('nama_penerbit', $penerbit->nama_penerbit) }}" required>
                 @error('nama_penerbit')
                     <span class="text-danger">{{ $message }}</span>
@@ -42,10 +162,13 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+        </div>
 
-            <button type="submit" class="btn-submit">Update Data Penerbit</button>
-        </form>
-    </div>
+        <div class="form-actions">
+            <a href="{{ route('penerbit.index') }}" class="btn-cancel">Batal</a>
+            <button type="submit" class="btn-update">Update Data Penerbit</button>
+        </div>
+    </form>
+</div>
 
-</body>
-</html>
+@endsection

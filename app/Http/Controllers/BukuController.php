@@ -12,12 +12,13 @@ class BukuController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $buku = Buku::with(['kategori','penerbit'])->get();
 
-        return view('admin.dashboard', compact('buku'));
+        $isManagement = $request->query('manage') === 'true';
 
+        return view('admin.dashboard', compact('buku', 'isManagement'));
     }
 
     /**

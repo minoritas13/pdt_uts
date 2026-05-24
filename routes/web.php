@@ -41,6 +41,8 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:SUPER_ADMIN'])->group(fu
     Route::resource('kategori', KategoriController::class);
     Route::resource('user', UserController::class);
 
+    Route::get('/dashboard', [BukuController::class, 'index'])->name('pusat.dashboard');
+
     Route::get('/distribusi', [DistribusiPusatController::class, 'index'])->name('pusat.distribusi');
     Route::post('/distribusi/kirim', [DistribusiPusatController::class, 'kirimBarang'])->name('pusat.distribusi.kirim');
 

@@ -1,65 +1,145 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Laporan Penjualan Global</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f7f6; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .kpi-board { display: flex; gap: 20px; margin-bottom: 30px; }
-        .kpi-card { flex: 1; padding: 20px; border-radius: 8px; color: white; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
-        th { background: #f8f9fa; }
-    </style>
-</head>
-<body>
+@extends('layouts.admin')
 
-<div class="container">
-    <h2>Laporan Omzet Keseluruhan (Integrasi Cabang)</h2>
+@section('title', 'Laporan Penjualan Global — SPBT Admin')
 
-    <form method="GET" action="{{ route('pusat.laporan.penjualan') }}" style="background: #f4f4f4; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
-        <label>Dari: <input type="date" name="tgl_mulai" value="{{ $tgl_mulai }}"></label>
-        <label style="margin-left: 10px;">Sampai: <input type="date" name="tgl_akhir" value="{{ $tgl_akhir }}"></label>
-        <button type="submit" style="margin-left: 10px; background: #007bff; color: white; border: none; padding: 6px 15px; border-radius: 4px;">Filter Laporan</button>
+@push('styles')
+<style>
+    .page-header { margin-bottom: 24px; }
+    .page-header h1 { font-size: 22px; font-weight: 800; color: var(--gray-800); }
+    .page-header p  { font-size: 13.5px; color: var(--gray-400); margin-top: 2px; }
+
+    /* ─── FILTER CONTAINER ─── */
+    .filter-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 16px 24px;
+        border: 1px solid var(--gray-200);
+        margin-bottom: 24px;
+    }
+    .filter-form { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .filter-group { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--gray-600); }
+    .filter-group input[type="date"] {
+        padding: 8px 16px; border-radius: 30px; border: 1px solid var(--gray-200); font-family: inherit; font-size: 13px; color: var(--gray-800); outline: none;
+    }
+    .btn-filter {
+        padding: 9px 20px; border-radius: 30px; background: #0c73be; color: var(--white); border: none; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+
+    /* ─── KPI METRICS CARD ─── */
+    .kpi-board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+    .kpi-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid var(--gray-200);
+        box-shadow: 0 4px 12px rgba(26, 46, 90, 0.02);
+    }
+    .kpi-card.highlight {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: var(--white);
+    }
+    .kpi-label { font-size: 12.5px; font-weight: 600; color: var(--gray-400); margin-bottom: 6px; }
+    .kpi-card.highlight .kpi-label { color: rgba(255, 255, 255, 0.6); }
+    .kpi-value { font-size: 24px; font-weight: 800; color: var(--gray-800); }
+    .kpi-card.highlight .kpi-value { color: var(--white); }
+    .kpi-sub { font-size: 11.5px; font-weight: 500; color: var(--gray-400); margin-top: 4px; }
+    .kpi-card.highlight .kpi-sub { color: rgba(255, 255, 255, 0.4); }
+
+    /* ─── DATA TABLE ─── */
+    .section-title { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 14px; }
+    .table-card {
+        background: var(--white); border-radius: 16px; border: 1px solid var(--gray-200); box-shadow: 0 4px 12px rgba(26, 46, 90, 0.03); overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+        padding: 14px 24px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.6px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100);
+    }
+    td { padding: 14px 24px; font-size: 13.5px; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--gray-50); }
+
+    .time-text { color: var(--gray-400); font-size: 13px; }
+    .struk-badge { font-weight: 700; color: var(--gray-800); }
+    .type-col { font-weight: 600; color: var(--navy-light); }
+    .total-col { font-weight: 700; text-align: right; color: var(--gray-800); }
+
+    @media (max-width: 900px) {
+        .kpi-board { grid-template-columns: 1fr; }
+    }
+</style>
+@endpush
+
+@section('content')
+
+<div class="page-header">
+    <h1>Laporan Omzet Keseluruhan</h1>
+    <p>Pantau rincian akumulasi omzet penjualan komparatif dari POS kasir offline maupun online.</p>
+</div>
+
+<div class="filter-card">
+    <form method="GET" action="{{ route('pusat.laporan.penjualan') }}" class="filter-form">
+        <div class="filter-group">
+            <label>Dari</label>
+            <input type="date" name="tgl_mulai" value="{{ $tgl_mulai }}">
+        </div>
+        <div class="filter-group">
+            <label>Sampai</label>
+            <input type="date" name="tgl_akhir" value="{{ $tgl_akhir }}">
+        </div>
+        <button type="submit" class="btn-filter">Filter Laporan</button>
     </form>
+</div>
 
-    <div class="kpi-board">
-        <div class="kpi-card" style="background: #28a745;">
-            <h3>Total Omzet Keseluruhan</h3>
-            <h2 style="margin:0;">Rp {{ number_format($total_omzet, 0, ',', '.') }}</h2>
-            <p style="margin:5px 0 0 0;">Dari {{ $total_transaksi }} Transaksi</p>
-        </div>
-        <div class="kpi-card" style="background: #17a2b8;">
-            <h3>Omzet POS (Kasir Offline)</h3>
-            <h2 style="margin:0;">Rp {{ number_format($omzet_offline, 0, ',', '.') }}</h2>
-        </div>
-        <div class="kpi-card" style="background: #6c757d;">
-            <h3>Omzet Pelanggan Online</h3>
-            <h2 style="margin:0;">Rp {{ number_format($omzet_online, 0, ',', '.') }}</h2>
-        </div>
+<div class="kpi-board">
+    <div class="kpi-card highlight">
+        <div class="kpi-label">Total Omzet Keseluruhan</div>
+        <div class="kpi-value">Rp {{ number_format($total_omzet, 0, ',', '.') }}</div>
+        <div class="kpi-sub">Dari {{ $total_transaksi }} Transaksi Terdata</div>
     </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Omzet POS (Kasir Offline)</div>
+        <div class="kpi-value" style="color: #15803d;">Rp {{ number_format($omzet_offline, 0, ',', '.') }}</div>
+        <div class="kpi-sub">Penjualan fisik rak cabang</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Omzet Pelanggan Online</div>
+        <div class="kpi-value" style="color: #0c73be;">Rp {{ number_format($omzet_online, 0, ',', '.') }}</div>
+        <div class="kpi-sub">Pembelian digital web platform</div>
+    </div>
+</div>
 
-    <h3>Rincian Transaksi Cabang</h3>
+<div class="section-title">Rincian Transaksi Cabang</div>
+<div class="table-card">
     <table>
-        <tr>
-            <th>Waktu Transaksi</th>
-            <th>No. Struk</th>
-            <th>Tipe Pembelian</th>
-            <th>Total Bayar</th>
-        </tr>
-        @forelse($transaksi as $trx)
-        <tr>
-            <td>{{ date('d/m/Y H:i', strtotime($trx->created_at)) }}</td>
-            <td><strong>{{ $trx->no_struk }}</strong></td>
-            <td>{{ $trx->tipe_pesanan }}</td>
-            <td>Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
-        </tr>
-        @empty
-        <tr><td colspan="4" style="text-align: center;">Belum ada data penjualan.</td></tr>
-        @endforelse
+        <thead>
+            <tr>
+                <th style="width: 20%;">Waktu Transaksi</th>
+                <th style="width: 25%;">No. Struk</th>
+                <th style="width: 35%;">Tipe Pembelian</th>
+                <th style="width: 20%; text-align: right;">Total Bayar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($transaksi as $trx)
+            <tr>
+                <td><span class="time-text">{{ date('d/m/Y H:i', strtotime($trx->created_at)) }}</span></td>
+                <td><span class="struk-badge">{{ $trx->no_struk }}</span></td>
+                <td><span class="type-col">{{ $trx->tipe_pesanan }}</span></td>
+                <td class="total-col">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 32px; color: var(--gray-400);">Belum ada data penjualan.</td>
+            </tr>
+            @endforelse
+        </tbody>
     </table>
 </div>
 
-</body>
-</html>
+@endsection

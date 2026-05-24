@@ -1,72 +1,210 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Kategori Buku</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-        .header h2 { margin: 0; color: #007bff; }
-        .btn-add { background-color: #007bff; color: white; text-decoration: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; font-size: 14px; }
-        .btn-add:hover { background-color: #0056b3; }
+@extends('layouts.admin')
 
-        .alert-success { background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c3e6cb; font-weight: bold; }
+@section('title', 'Master Data Kategori — SPBT Admin')
 
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; font-weight: bold; color: #555; }
-        tr:hover { background-color: #f9fafb; }
+@push('styles')
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+    .page-header h1 {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--gray-800);
+    }
+    .page-header p {
+        font-size: 13.5px;
+        color: var(--gray-400);
+        margin-top: 2px;
+    }
 
-        .btn-edit { background-color: #ffc107; color: #212529; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; margin-right: 5px; display: inline-block; }
-        .btn-edit:hover { background-color: #e0a800; }
+    .btn-add {
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: var(--navy);
+        color: var(--white);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.18s;
+    }
 
-        .btn-delete { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        .btn-delete:hover { background-color: #c82333; }
+    .btn-add:hover {
+        background: var(--navy-light);
+    }
 
-        .empty-state { text-align: center; padding: 30px; color: #777; font-style: italic; }
-    </style>
-</head>
-<body>
+    /* ─── TABLE CARD COMPONENT ─── */
+    .table-card {
+        background: var(--white);
+        border-radius: 16px;
+        border: 1px solid var(--gray-200);
+        box-shadow: 0 4px 12px rgba(26, 46, 90, 0.03);
+        overflow: hidden;
+    }
 
-    <div class="container">
-        <div class="header">
-            <h2>Master Data Kategori</h2>
-            <a href="{{ route('kategori.create') }}" class="btn-add">+ Tambah Kategori</a>
-        </div>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        @if(session('success'))
-            <div class="alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+    th {
+        padding: 14px 24px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gray-400);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-100);
+    }
 
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 10%;">ID</th>
-                    <th style="width: 60%;">Nama Kategori</th>
-                    <th style="width: 30%; text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($kategori as $item)
-                <tr>
-                    <td>{{ $item->id }}</td>
-                    <td><strong>{{ $item->nama_kategori }}</strong></td>
-                    <td style="text-align: center;">
-                        <a href="{{ route('kategori.edit', $item->id) }}" class="btn-edit">Edit</a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="3" class="empty-state">Belum ada data kategori di database pusat.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+    td {
+        padding: 16px 24px;
+        font-size: 13.5px;
+        color: var(--gray-800);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background: var(--gray-50);
+    }
+
+    .category-id {
+        font-weight: 700;
+        color: var(--navy-light);
+    }
+
+    .category-name {
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+
+    /* ─── ACTION BUTTONS ─── */
+    .btn-edit {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--navy);
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 30px;
+        border: 1.5px solid var(--gray-200);
+        transition: all 0.15s;
+        display: inline-block;
+    }
+
+    .btn-edit:hover {
+        border-color: var(--navy);
+        background: var(--gray-50);
+    }
+
+    /* ─── TOAST / NOTIFICATION ─── */
+    .alert-success {
+        background: var(--green-bg);
+        color: #15803d;
+        padding: 12px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        font-size: 13.5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px !--important;
+        color: var(--gray-400);
+        font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+        th, td {
+            padding: 12px 16px;
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+
+<div class="page-header">
+    <div>
+        <h1>Master Data Kategori</h1>
+        <p>Kelola pembagian rumpun kategori pustaka buku pada sistem pusat.</p>
     </div>
+    <a href="{{ route('kategori.create') }}" class="btn-add">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        Tambah Kategori
+    </a>
+</div>
 
-</body>
-</html>
+@if(session('success'))
+    <div class="alert-success">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ session('success') }}
+    </div>
+@endif
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">ID Kategori</th>
+                <th style="width: 65%;">Nama Kategori Buku</th>
+                <th style="width: 20%; text-align: right;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($kategori as $item)
+            <tr>
+                <td><span class="category-id">#{{ $item->id }}</span></td>
+                <td><span class="category-name">{{ $item->nama_kategori }}</span></td>
+                <td style="text-align: right;">
+                    <a href="{{ route('kategori.edit', $item->id) }}" class="btn-edit">Edit</a>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="3" class="empty-state">
+                    <div style="margin-bottom: 8px;">
+                        <svg width="40" height="40" fill="none" stroke="var(--gray-400)" stroke-width="1.5" viewBox="0 0 24 24" style="display: inline-block;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0h18a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v4.5A2.25 2.25 0 002.25 13.5zm0 0V16.5A2.25 2.25 0 004.5 18.75h15a2.25 2.25 0 002.25-2.25V13.5m-18 0V16.5"/>
+                        </svg>
+                    </div>
+                    Belum ada data kategori di database pusat.
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+@endsection
