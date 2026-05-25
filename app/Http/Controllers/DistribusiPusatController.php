@@ -36,13 +36,10 @@ class DistribusiPusatController extends Controller
             return redirect()->back()->with('error', 'Stok pusat tidak mencukupi!');
         }
 
-        // Generate Nomor Surat Jalan
         $no_surat = 'SJ-' . time() . '-' . rand(10, 99);
 
-        // 1. Kurangi Stok Pusat
         $buku->decrement('qty_tersedia', $request->qty);
 
-        // 2. Catat Mutasi Pusat dengan Keterangan Nomor Surat Jalan persis
         MutasiGudangPusat::create([
             'buku_id'    => $buku->id,
             'jenis'      => 'KELUAR',

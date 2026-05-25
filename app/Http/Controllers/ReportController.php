@@ -54,6 +54,6 @@ class ReportController extends Controller
             $item->buku = Buku::query()->find($item->buku_id);
         }
 
-        return view('admin.report.laporan_terlaris', compact('buku_terlaris', 'tgl_mulai', 'tgl_akhir'));
+        return view('admin_cabang.laporan_terlaris', compact('buku_terlaris', 'tgl_mulai', 'tgl_akhir'));
     }
 }

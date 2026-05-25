@@ -11,6 +11,8 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PenerbitController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportPusatController;
+use App\Http\Controllers\RequestCabangController;
+use App\Http\Controllers\RequestPusatController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +51,9 @@ Route::prefix('admin-pusat')->middleware(['auth', 'role:SUPER_ADMIN'])->group(fu
     Route::get('/laporan/stok', [ReportPusatController::class, 'laporanStok'])->name('pusat.laporan.stok');
     Route::get('/laporan/distribusi', [ReportPusatController::class, 'laporanDistribusi'])->name('pusat.laporan.distribusi');
     Route::get('/laporan/penjualan', [ReportPusatController::class, 'penjualanGlobal'])->name('pusat.laporan.penjualan');
+
+    Route::get('/request-cabang', [RequestPusatController::class, 'index'])->name('pusat.request.index');
+    Route::post('/request-cabang/{id}/proses', [RequestPusatController::class, 'proses'])->name('pusat.request.proses');
 });
 
 // 2. PREFIX: ADMIN CABANG (Hanya ADMIN_CABANG)
@@ -58,6 +63,9 @@ Route::prefix('admin-cabang')->middleware(['auth', 'role:ADMIN_CABANG'])->group(
 
     Route::get('/laporan/penjualan', [ReportController::class, 'laporanPenjualan'])->name('cabang.laporan.penjualan');
     Route::get('/laporan/buku-terlaris', [ReportController::class, 'bukuTerlaris'])->name('cabang.laporan.terlaris');
+
+    Route::get('/request-stok', [RequestCabangController::class, 'index'])->name('cabang.request.index');
+    Route::post('/request-stok', [RequestCabangController::class, 'store'])->name('cabang.request.store');
 });
 
 // 3. PREFIX: KASIR (Hanya KASIR)

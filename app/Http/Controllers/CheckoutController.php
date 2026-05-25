@@ -42,7 +42,6 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // 3. Bersihkan keranjang dan arahkan ke halaman pembayaran/upload bukti
         session()->forget('cart');
         return redirect()->route('checkout.bayar', $transaksi->id);
     }

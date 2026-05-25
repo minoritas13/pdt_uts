@@ -30,7 +30,7 @@ class DistribusiCabangController extends Controller
             $mutasi->buku = Buku::query()->find($mutasi->buku_id);
         }
 
-        return view('admin.stok.cabang_terima', compact('pengirimanDiJalan'));
+        return view('admin_cabang.terima', compact('pengirimanDiJalan'));
     }
 
     public function terimaBarang(string $id)
