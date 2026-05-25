@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'SPBT Admin')</title>
+    <title>@yield('title', 'SPBT Admin Cabang')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo-spbt.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
             --yellow-bg: #fef9c3;
             --red: #ef4444;
             --red-bg: #fee2e2;
-            --sidebar-w: 220px;
+            --sidebar-w: 240px; /* Lebar disesuaikan agar teks menu nyaman dibaca */
             --topbar-h: 64px;
         }
 
@@ -58,7 +58,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 20px 20px 24px;
+            padding: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
@@ -104,7 +104,6 @@
             font-size: 13.5px;
             font-weight: 500;
             transition: all 0.18s ease;
-            cursor: pointer;
         }
 
         .nav-item:hover {
@@ -172,8 +171,7 @@
             justify-content: space-between;
             padding: 0 28px;
             position: sticky;
-            top: 0;
-            z-index: 50;
+            top: 0; z-index: 50;
         }
 
         .topbar-search {
@@ -272,84 +270,41 @@
 </head>
 <body>
 
-{{-- Sidebar Overlay (mobile) --}}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-{{-- SIDEBAR --}}
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-icon">S</div>
-        <span class="logo-text">SPBT Admin</span>
+        <div class="logo-icon">C</div>
+        <span class="logo-text">SPBT Cabang</span>
     </div>
 
     <nav class="sidebar-nav">
         <span class="nav-label">Menu Utama</span>
 
-        <a href="{{ route('buku.index') }}"
-           class="nav-item {{ request()->routeIs('buku.index') && !request()->has('manage') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        <a href="{{ route('cabang.penerimaan') }}"
+           class="nav-item {{ request()->routeIs('cabang.penerimaan*') ? 'active' : '' }}">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0h18" />
             </svg>
-            Beranda
+            Penerimaan Barang
         </a>
 
-        <span class="nav-label">Manajemen</span>
+        <span class="nav-label">Pelaporan</span>
 
-        <a href="{{ route('buku.index', ['manage' => 'true']) }}"
-           class="nav-item {{ (request()->routeIs('buku.index') && request()->has('manage')) || request()->routeIs('buku.create', 'buku.edit', 'buku.show') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        <a href="{{ route('cabang.laporan.penjualan') }}"
+           class="nav-item {{ request()->routeIs('cabang.laporan.penjualan') ? 'active' : '' }}">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
-            Kelola Buku
+            Laporan Omzet
         </a>
 
-        <a href="{{ route('pusat.distribusi') }}"
-           class="nav-item {{ request()->routeIs('pusat.distribusi*') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+        <a href="{{ route('cabang.laporan.terlaris') }}"
+           class="nav-item {{ request()->routeIs('cabang.laporan.terlaris') ? 'active' : '' }}">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Distribusi Buku
-        </a>
-
-        <a href="{{ route('user.index') }}"
-           class="nav-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            Kelola User
-        </a>
-
-        <span class="nav-label">Laporan</span>
-
-        <a href="{{ route('pusat.laporan.penjualan') }}"
-           class="nav-item {{ request()->routeIs('pusat.laporan.penjualan') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-            Laporan Penjualan
-        </a>
-
-        <a href="{{ route('pusat.laporan.stok') }}"
-           class="nav-item {{ request()->routeIs('pusat.laporan.stok') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-            </svg>
-            Laporan Stok
-        </a>
-
-        <a href="{{ route('pusat.laporan.distribusi') }}"
-           class="nav-item {{ request()->routeIs('pusat.laporan.distribusi') ? 'active' : '' }}">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            Laporan Distribusi
+            Buku Terlaris
         </a>
     </nav>
 
@@ -357,9 +312,8 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="logout-btn">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
                 Keluar Akun
             </button>
@@ -367,9 +321,7 @@
     </div>
 </aside>
 
-{{-- MAIN --}}
 <div class="main-wrapper">
-    {{-- TOPBAR --}}
     <header class="topbar">
         <div style="display:flex; align-items:center; gap:14px;">
             <button class="hamburger" onclick="toggleSidebar()">
@@ -379,26 +331,24 @@
             </button>
             <div class="topbar-search">
                 <svg width="16" height="16" fill="none" stroke="#9aa3be" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
                 </svg>
-                <input type="text" placeholder="Cari data, transaksi, atau buku...">
+                <input type="text" placeholder="Cari laporan atau nomor struk...">
             </div>
         </div>
         <div class="topbar-right">
             <div class="user-chip">
                 <div class="user-info">
-                    <div class="user-name">{{ auth()->user()->name ?? 'Admin' }}</div>
-                    <div class="user-role">{{ auth()->user()->role ?? 'SUPER ADMIN' }}</div>
+                    <div class="user-name">{{ auth()->user()->name ?? 'Admin Cabang' }}</div>
+                    <div class="user-role">ADMIN CABANG</div>
                 </div>
                 <div class="avatar">
-                    {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                    {{ strtoupper(substr(auth()->user()->name ?? 'C', 0, 1)) }}
                 </div>
             </div>
         </div>
     </header>
 
-    {{-- PAGE CONTENT --}}
     <main class="page-content">
         @yield('content')
     </main>

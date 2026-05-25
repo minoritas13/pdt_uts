@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.branch_admin')
 
 @section('title', 'Penerimaan Barang Cabang (Inbound) — SPBT Admin')
 

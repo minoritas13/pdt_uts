@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends(request()->is('admin-pusat*') ? 'layouts.admin' : 'layouts.branch_admin')
 
 @section('title', 'Laporan Penjualan Global — SPBT Admin')
 
@@ -83,7 +83,7 @@
 </div>
 
 <div class="filter-card">
-    <form method="GET" action="{{ route('pusat.laporan.penjualan') }}" class="filter-form">
+    <form method="GET" action="{{ url()->current() }}" class="filter-form">
         <div class="filter-group">
             <label>Dari</label>
             <input type="date" name="tgl_mulai" value="{{ $tgl_mulai }}">
