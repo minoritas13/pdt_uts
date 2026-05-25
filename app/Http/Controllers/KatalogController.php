@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buku;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class KatalogController extends Controller
@@ -12,6 +13,39 @@ class KatalogController extends Controller
         $buku = Buku::all(); // Mengambil dari db_pusat
 
         return view('user.index', compact('buku'));
+    }
+
+    public function allBooks(Request $request)
+    {
+        $kategori = Kategori::all(); 
+        
+        $query = Buku::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = $request->search;
+
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('judul', 'ILIKE', '%' . $searchTerm . '%')
+                ->orWhere('penulis', 'ILIKE', '%' . $searchTerm . '%');
+            });
+        }
+
+        if ($request->has('kategori_id') && $request->kategori_id != '') {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        $buku = $query->get();
+
+        return view('user.list', compact('buku', 'kategori')); 
+    }
+
+    public function showDetail($id)
+    {
+        $bukuUtama = Buku::with(['kategori', 'penerbit'])->findOrFail($id);
+
+        $bukuSerupa = Buku::where('id', '!=', $id)->take(5)->get();
+
+        return view('user.detail', compact('bukuUtama', 'bukuSerupa'));
     }
 
     public function addToCart(Request $request, $id)

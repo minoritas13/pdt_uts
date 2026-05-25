@@ -71,6 +71,8 @@ Route::prefix('kasir')->middleware(['auth', 'role:KASIR'])->group(function () {
 // 4. PREFIX: USER / PELANGGAN (Hanya PELANGGAN)
 Route::prefix('user')->middleware(['auth', 'role:PELANGGAN'])->group(function () {
     Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
+    Route::get('/buku', [KatalogController::class, 'allBooks'])->name('buku.all');
+    Route::get('/buku/detail/{id}', [KatalogController::class, 'showDetail'])->name('buku.detail');
     Route::post('/cart/add/{id}', [KatalogController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [KatalogController::class, 'showCart'])->name('cart.show');
     Route::post('/cart/update', [KatalogController::class, 'updateCart'])->name('cart.update');
