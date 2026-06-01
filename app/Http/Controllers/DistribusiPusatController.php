@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Buku;
+use App\Models\Cabang;
 use App\Models\MutasiGudangPusat;
 use App\Models\StokGudangPusat;
+use Illuminate\Http\Request;
 
 class DistribusiPusatController extends Controller
 {
     public function index()
     {
-        $buku = Buku::query()->get();
+        $buku = StokGudangPusat::with('buku')->get();
 
         // Menampilkan histori pengiriman (mutasi KELUAR yang diawali kode SJ-)
         $pengiriman = MutasiGudangPusat::query()
@@ -20,7 +20,9 @@ class DistribusiPusatController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.stok.pusat_kirim', compact('buku', 'pengiriman'));
+        $daftarCabang = Cabang::query()->orderBy('nama_cabang')->get();
+
+        return view('admin.stok.pusat_kirim', compact('buku', 'pengiriman','daftarCabang'));
     }
 
     public function kirimBarang(Request $request)

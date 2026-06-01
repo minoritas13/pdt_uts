@@ -29,4 +29,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function cabang() {
+        return $this->belongsTo(Cabang::class, 'cabang_id');
+    }
 }

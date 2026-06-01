@@ -13,12 +13,12 @@ class RequestPusatController extends Controller
     {
         // Panggil relasi 'buku' DAN 'stokPusat' sekaligus
         $permintaan = RequestStok::query()
-            ->with(['buku', 'stokPusat'])
+            ->with(['buku', 'stokPusat', 'cabang'])
             ->where('status', 'PENDING')
             ->orderBy('created_at', 'asc')
             ->get();
-            
-        return view('admin_pusat.request.index', compact('permintaan'));
+
+        return view('admin.request.index', compact('permintaan'));
     }
 
     public function proses(Request $request, string $id)
@@ -48,7 +48,7 @@ class RequestPusatController extends Controller
             'buku_id'    => $reqStok->buku_id,
             'jenis'      => 'KELUAR',
             'qty'        => $reqStok->qty,
-            'keterangan' => $no_surat, 
+            'keterangan' => $no_surat,
         ]);
 
         // 3. Ubah status Request menjadi DIKIRIM

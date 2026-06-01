@@ -12,7 +12,7 @@ class RequestCabangController extends Controller
     {
         // Tampilkan semua buku yang ada di database pusat untuk dipilih
         $buku = Buku::query()->orderBy('judul')->get();
-        
+
         // Tampilkan histori request dari cabang ini
         $riwayat_request = RequestStok::query()->with('buku')->orderBy('created_at', 'desc')->get();
 
@@ -30,6 +30,7 @@ class RequestCabangController extends Controller
             'buku_id' => $request->buku_id,
             'qty' => $request->qty,
             'catatan_cabang' => $request->catatan_cabang,
+            'cabang_id' => auth()->user()->cabang_id,
             'status' => 'PENDING'
         ]);
 

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('buku_id');
             $table->enum('jenis', ['MASUK', 'KELUAR']);
             $table->integer('qty');
-            $table->string('keterangan'); // Misal: "Dari Penerbit" atau "Kirim ke Cabang BDO"
+            $table->unsignedBigInteger('cabang_id')->nullable();
+            $table->string('keterangan');
             $table->timestamp('waktu')->useCurrent();
             $table->timestamps();
 

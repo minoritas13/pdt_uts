@@ -258,9 +258,35 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $buku_id
+ * @property int $qty
+ * @property string|null $catatan_cabang
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Buku|null $buku
+ * @property-read \App\Models\StokGudangPusat|null $stokPusat
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereBukuId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereCatatanCabang($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereQty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestStok whereUpdatedAt($value)
+ */
+	class RequestStok extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $buku_id
  * @property int $qty_tersedia
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Buku|null $buku
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StokGudangPusat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StokGudangPusat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StokGudangPusat query()
@@ -329,6 +355,7 @@ namespace App\Models{
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
+ * @property string $role
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -345,6 +372,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  */
 	class User extends \Eloquent {}

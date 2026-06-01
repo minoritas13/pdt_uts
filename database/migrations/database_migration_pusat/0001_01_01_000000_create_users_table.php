@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
+
             // 2. Tambahkan kolom role untuk Hak Akses
             $table->enum('role', ['SUPER_ADMIN', 'ADMIN_CABANG', 'KASIR', 'PELANGGAN'])->default('PELANGGAN');
-            
+
             $table->rememberToken();
             $table->timestamps();
         });

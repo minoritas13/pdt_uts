@@ -13,6 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('buku_id');
             $table->integer('qty');
             $table->string('catatan_cabang')->nullable();
+            $table->unsignedBigInteger('cabang_id');
             $table->enum('status', ['PENDING', 'DIKIRIM', 'DITOLAK'])->default('PENDING');
             $table->timestamps();
         });
